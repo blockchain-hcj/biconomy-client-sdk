@@ -1799,8 +1799,9 @@ export class BiconomySmartAccountV2 extends BaseSmartContractAccount {
       return userOp;
     }
 
+    console.log(12121212121)
     userOp = await this.estimateUserOpGas(userOp);
-
+    console.log(232323232323)
     if (buildUseropDto?.gasOffset) {
       if (buildUseropDto?.paymasterServiceData) {
         userOp = await this.getPaymasterUserOp(userOp, {
