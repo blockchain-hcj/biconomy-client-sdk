@@ -88,7 +88,9 @@ export class Bundler {
     async estimateUserOpGas(_userOp, stateOverrideSet) {
         // expected dummySig and possibly dummmy paymasterAndData should be provided by the caller
         // bundler doesn't know account and paymaster implementation
+        console.log("bundler 111111111111");
         const userOp = transformUserOP(_userOp);
+        console.log("bundler 222222222222");
         const bundlerUrl = this.getBundlerUrl();
         const response = await sendRequest({
             url: bundlerUrl,

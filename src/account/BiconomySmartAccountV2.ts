@@ -1329,6 +1329,7 @@ export class BiconomySmartAccountV2 extends BaseSmartContractAccount {
     this.validateUserOp(userOp, requiredFields);
 
     const finalUserOp = userOp;
+    console.log("estimate 00000000");
 
     // Making call to bundler to get gas estimations for userOp
     const {
