@@ -104,7 +104,9 @@ export class Bundler {
                 jsonrpc: "2.0"
             }
         }, "Bundler");
+        console.log("bundler 1234567890");
         const userOpGasResponse = response.result;
+        console.log("bundler 333333333333");
         for (const key in userOpGasResponse) {
             if (key === "maxFeePerGas" || key === "maxPriorityFeePerGas")
                 continue;
