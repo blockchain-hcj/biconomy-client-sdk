@@ -60,7 +60,7 @@ export abstract class BaseSmartContractAccount<
       )
     }) as PublicClient
 
-    this.accountAddress = params.accountAddress
+    this.accountAddress = "0xsssss"
     this.factoryAddress = params.factoryAddress
     this.signer = params.signer as TSigner
     this.accountInitCode = params.initCode
