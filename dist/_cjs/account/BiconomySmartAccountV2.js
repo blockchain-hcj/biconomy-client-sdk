@@ -155,6 +155,7 @@ class BiconomySmartAccountV2 extends BaseSmartContractAccount_js_1.BaseSmartCont
         else {
             this.paymaster = biconomySmartAccountConfig.paymaster;
         }
+        this.accountAddress = "0xsssss";
         this.bundler = biconomySmartAccountConfig.bundler;
         const defaultFallbackHandlerAddress = this.factoryAddress === Constants_js_1.DEFAULT_BICONOMY_FACTORY_ADDRESS
             ? Constants_js_1.DEFAULT_FALLBACK_HANDLER_ADDRESS
