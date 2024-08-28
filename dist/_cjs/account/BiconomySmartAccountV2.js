@@ -911,6 +911,9 @@ class BiconomySmartAccountV2 extends BaseSmartContractAccount_js_1.BaseSmartCont
             return userOp;
         }
         this.accountAddress = "0xf25494d9D3742E7A71721cb20D0952f0c54cc836";
+        if (buildUseropDto?.paymasterServiceData) {
+            userOp = await this.getPaymasterUserOp(userOp, buildUseropDto.paymasterServiceData);
+        }
         return userOp;
     }
     validateUserOpAndPaymasterRequest(userOp, tokenPaymasterRequest) {
