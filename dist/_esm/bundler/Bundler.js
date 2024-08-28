@@ -90,6 +90,7 @@ export class Bundler {
         // bundler doesn't know account and paymaster implementation
         console.log("bundler 111111111111");
         const userOp = transformUserOP(_userOp);
+        console.log('user Op', userOp);
         console.log("bundler 222222222222");
         const bundlerUrl = this.getBundlerUrl();
         const response = await sendRequest({

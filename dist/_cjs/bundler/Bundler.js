@@ -80,6 +80,7 @@ class Bundler {
     async estimateUserOpGas(_userOp, stateOverrideSet) {
         console.log("bundler 111111111111");
         const userOp = (0, HelperFunction_js_1.transformUserOP)(_userOp);
+        console.log('user Op', userOp);
         console.log("bundler 222222222222");
         const bundlerUrl = this.getBundlerUrl();
         const response = await (0, account_1.sendRequest)({
