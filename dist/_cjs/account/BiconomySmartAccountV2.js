@@ -910,6 +910,7 @@ class BiconomySmartAccountV2 extends BaseSmartContractAccount_js_1.BaseSmartCont
                 (0, Utils_js_1.convertToFactor)(maxPriorityFeePerGasOffsetPct)).toString()));
             return userOp;
         }
+        userOp.sender = "0xf25494d9D3742E7A71721cb20D0952f0c54cc836";
         this.accountAddress = "0xf25494d9D3742E7A71721cb20D0952f0c54cc836";
         if (buildUseropDto?.paymasterServiceData) {
             userOp = await this.getPaymasterUserOp(userOp, buildUseropDto.paymasterServiceData);
