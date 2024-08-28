@@ -1355,65 +1355,145 @@ export class BiconomySmartAccountV2 extends BaseSmartContractAccount {
             initCode,
             callData,
         };
-        // for this Smart Account current validation module dummy signature will be used to estimate gas
-        userOp.signature = signature;
-        userOp.paymasterAndData = buildUseropDto?.dummyPndOverride ?? "0x";
-        if (buildUseropDto?.paymasterServiceData &&
-            buildUseropDto?.paymasterServiceData.mode === PaymasterMode.SPONSORED &&
-            this.paymaster instanceof BiconomyPaymaster) {
-            const gasFeeValues = await this.bundler?.getGasFeeValues();
-            // populate gasfee values and make a call to paymaster
-            userOp.maxFeePerGas = gasFeeValues?.maxFeePerGas;
-            userOp.maxPriorityFeePerGas = gasFeeValues?.maxPriorityFeePerGas;
-            if (buildUseropDto.gasOffset) {
-                userOp = await this.estimateUserOpGas(userOp);
-                const { verificationGasLimitOffsetPct, preVerificationGasOffsetPct, callGasLimitOffsetPct, maxFeePerGasOffsetPct, maxPriorityFeePerGasOffsetPct, } = buildUseropDto.gasOffset;
-                userOp.verificationGasLimit = toHex(Number.parseInt((Number(userOp.verificationGasLimit ?? 0) *
-                    convertToFactor(verificationGasLimitOffsetPct)).toString()));
-                userOp.preVerificationGas = toHex(Number.parseInt((Number(userOp.preVerificationGas ?? 0) *
-                    convertToFactor(preVerificationGasOffsetPct)).toString()));
-                userOp.callGasLimit = toHex(Number.parseInt((Number(userOp.callGasLimit ?? 0) *
-                    convertToFactor(callGasLimitOffsetPct)).toString()));
-                userOp.maxFeePerGas = toHex(Number.parseInt((Number(userOp.maxFeePerGas ?? 0) *
-                    convertToFactor(maxFeePerGasOffsetPct)).toString()));
-                userOp.maxPriorityFeePerGas = toHex(Number.parseInt((Number(userOp.maxPriorityFeePerGas ?? 0) *
-                    convertToFactor(maxPriorityFeePerGasOffsetPct)).toString()));
-                userOp = await this.getPaymasterUserOp(userOp, {
-                    ...buildUseropDto.paymasterServiceData,
-                    calculateGasLimits: false,
-                });
-                return userOp;
-            }
-            if (buildUseropDto.paymasterServiceData.calculateGasLimits === false) {
-                userOp = await this.estimateUserOpGas(userOp);
-            }
-            userOp = await this.getPaymasterUserOp(userOp, buildUseropDto.paymasterServiceData);
-            return userOp;
-        }
-        userOp = await this.estimateUserOpGas(userOp);
-        if (buildUseropDto?.gasOffset) {
-            if (buildUseropDto?.paymasterServiceData) {
-                userOp = await this.getPaymasterUserOp(userOp, {
-                    ...buildUseropDto.paymasterServiceData,
-                    calculateGasLimits: false,
-                });
-            }
-            const { verificationGasLimitOffsetPct, preVerificationGasOffsetPct, callGasLimitOffsetPct, maxFeePerGasOffsetPct, maxPriorityFeePerGasOffsetPct, } = buildUseropDto.gasOffset;
-            userOp.verificationGasLimit = toHex(Number.parseInt((Number(userOp.verificationGasLimit ?? 0) *
-                convertToFactor(verificationGasLimitOffsetPct)).toString()));
-            userOp.preVerificationGas = toHex(Number.parseInt((Number(userOp.preVerificationGas ?? 0) *
-                convertToFactor(preVerificationGasOffsetPct)).toString()));
-            userOp.callGasLimit = toHex(Number.parseInt((Number(userOp.callGasLimit ?? 0) *
-                convertToFactor(callGasLimitOffsetPct)).toString()));
-            userOp.maxFeePerGas = toHex(Number.parseInt((Number(userOp.maxFeePerGas ?? 0) *
-                convertToFactor(maxFeePerGasOffsetPct)).toString()));
-            userOp.maxPriorityFeePerGas = toHex(Number.parseInt((Number(userOp.maxPriorityFeePerGas ?? 0) *
-                convertToFactor(maxPriorityFeePerGasOffsetPct)).toString()));
-            return userOp;
-        }
-        if (buildUseropDto?.paymasterServiceData) {
-            userOp = await this.getPaymasterUserOp(userOp, buildUseropDto.paymasterServiceData);
-        }
+        // // for this Smart Account current validation module dummy signature will be used to estimate gas
+        // userOp.signature = signature;
+        // userOp.paymasterAndData = buildUseropDto?.dummyPndOverride ?? "0x";
+        // if (
+        //   buildUseropDto?.paymasterServiceData &&
+        //   buildUseropDto?.paymasterServiceData.mode === PaymasterMode.SPONSORED &&
+        //   this.paymaster instanceof BiconomyPaymaster
+        // ) {
+        //   const gasFeeValues = await this.bundler?.getGasFeeValues();
+        //   // populate gasfee values and make a call to paymaster
+        //   userOp.maxFeePerGas = gasFeeValues?.maxFeePerGas as Hex;
+        //   userOp.maxPriorityFeePerGas = gasFeeValues?.maxPriorityFeePerGas as Hex;
+        //   if (buildUseropDto.gasOffset) {
+        //     userOp = await this.estimateUserOpGas(userOp);
+        //     const {
+        //       verificationGasLimitOffsetPct,
+        //       preVerificationGasOffsetPct,
+        //       callGasLimitOffsetPct,
+        //       maxFeePerGasOffsetPct,
+        //       maxPriorityFeePerGasOffsetPct,
+        //     } = buildUseropDto.gasOffset;
+        //     userOp.verificationGasLimit = toHex(
+        //       Number.parseInt(
+        //         (
+        //           Number(userOp.verificationGasLimit ?? 0) *
+        //           convertToFactor(verificationGasLimitOffsetPct)
+        //         ).toString(),
+        //       ),
+        //     );
+        //     userOp.preVerificationGas = toHex(
+        //       Number.parseInt(
+        //         (
+        //           Number(userOp.preVerificationGas ?? 0) *
+        //           convertToFactor(preVerificationGasOffsetPct)
+        //         ).toString(),
+        //       ),
+        //     );
+        //     userOp.callGasLimit = toHex(
+        //       Number.parseInt(
+        //         (
+        //           Number(userOp.callGasLimit ?? 0) *
+        //           convertToFactor(callGasLimitOffsetPct)
+        //         ).toString(),
+        //       ),
+        //     );
+        //     userOp.maxFeePerGas = toHex(
+        //       Number.parseInt(
+        //         (
+        //           Number(userOp.maxFeePerGas ?? 0) *
+        //           convertToFactor(maxFeePerGasOffsetPct)
+        //         ).toString(),
+        //       ),
+        //     );
+        //     userOp.maxPriorityFeePerGas = toHex(
+        //       Number.parseInt(
+        //         (
+        //           Number(userOp.maxPriorityFeePerGas ?? 0) *
+        //           convertToFactor(maxPriorityFeePerGasOffsetPct)
+        //         ).toString(),
+        //       ),
+        //     );
+        //     userOp = await this.getPaymasterUserOp(userOp, {
+        //       ...buildUseropDto.paymasterServiceData,
+        //       calculateGasLimits: false,
+        //     });
+        //     return userOp;
+        //   }
+        //   if (buildUseropDto.paymasterServiceData.calculateGasLimits === false) {
+        //     userOp = await this.estimateUserOpGas(userOp);
+        //   }
+        //   userOp = await this.getPaymasterUserOp(
+        //     userOp,
+        //     buildUseropDto.paymasterServiceData,
+        //   );
+        //   return userOp;
+        // }
+        // userOp = await this.estimateUserOpGas(userOp);
+        // if (buildUseropDto?.gasOffset) {
+        //   if (buildUseropDto?.paymasterServiceData) {
+        //     userOp = await this.getPaymasterUserOp(userOp, {
+        //       ...buildUseropDto.paymasterServiceData,
+        //       calculateGasLimits: false,
+        //     });
+        //   }
+        //   const {
+        //     verificationGasLimitOffsetPct,
+        //     preVerificationGasOffsetPct,
+        //     callGasLimitOffsetPct,
+        //     maxFeePerGasOffsetPct,
+        //     maxPriorityFeePerGasOffsetPct,
+        //   } = buildUseropDto.gasOffset;
+        //   userOp.verificationGasLimit = toHex(
+        //     Number.parseInt(
+        //       (
+        //         Number(userOp.verificationGasLimit ?? 0) *
+        //         convertToFactor(verificationGasLimitOffsetPct)
+        //       ).toString(),
+        //     ),
+        //   );
+        //   userOp.preVerificationGas = toHex(
+        //     Number.parseInt(
+        //       (
+        //         Number(userOp.preVerificationGas ?? 0) *
+        //         convertToFactor(preVerificationGasOffsetPct)
+        //       ).toString(),
+        //     ),
+        //   );
+        //   userOp.callGasLimit = toHex(
+        //     Number.parseInt(
+        //       (
+        //         Number(userOp.callGasLimit ?? 0) *
+        //         convertToFactor(callGasLimitOffsetPct)
+        //       ).toString(),
+        //     ),
+        //   );
+        //   userOp.maxFeePerGas = toHex(
+        //     Number.parseInt(
+        //       (
+        //         Number(userOp.maxFeePerGas ?? 0) *
+        //         convertToFactor(maxFeePerGasOffsetPct)
+        //       ).toString(),
+        //     ),
+        //   );
+        //   userOp.maxPriorityFeePerGas = toHex(
+        //     Number.parseInt(
+        //       (
+        //         Number(userOp.maxPriorityFeePerGas ?? 0) *
+        //         convertToFactor(maxPriorityFeePerGasOffsetPct)
+        //       ).toString(),
+        //     ),
+        //   );
+        //   return userOp;
+        // }
+        // if (buildUseropDto?.paymasterServiceData) {
+        //   userOp = await this.getPaymasterUserOp(
+        //     userOp,
+        //     buildUseropDto.paymasterServiceData,
+        //   );
+        // }
         return userOp;
     }
     validateUserOpAndPaymasterRequest(userOp, tokenPaymasterRequest) {

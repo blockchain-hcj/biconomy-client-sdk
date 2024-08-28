@@ -851,63 +851,6 @@ class BiconomySmartAccountV2 extends BaseSmartContractAccount_js_1.BaseSmartCont
             initCode,
             callData,
         };
-        userOp.signature = signature;
-        userOp.paymasterAndData = buildUseropDto?.dummyPndOverride ?? "0x";
-        if (buildUseropDto?.paymasterServiceData &&
-            buildUseropDto?.paymasterServiceData.mode === paymaster_1.PaymasterMode.SPONSORED &&
-            this.paymaster instanceof paymaster_1.BiconomyPaymaster) {
-            const gasFeeValues = await this.bundler?.getGasFeeValues();
-            userOp.maxFeePerGas = gasFeeValues?.maxFeePerGas;
-            userOp.maxPriorityFeePerGas = gasFeeValues?.maxPriorityFeePerGas;
-            if (buildUseropDto.gasOffset) {
-                userOp = await this.estimateUserOpGas(userOp);
-                const { verificationGasLimitOffsetPct, preVerificationGasOffsetPct, callGasLimitOffsetPct, maxFeePerGasOffsetPct, maxPriorityFeePerGasOffsetPct, } = buildUseropDto.gasOffset;
-                userOp.verificationGasLimit = (0, viem_1.toHex)(Number.parseInt((Number(userOp.verificationGasLimit ?? 0) *
-                    (0, Utils_js_1.convertToFactor)(verificationGasLimitOffsetPct)).toString()));
-                userOp.preVerificationGas = (0, viem_1.toHex)(Number.parseInt((Number(userOp.preVerificationGas ?? 0) *
-                    (0, Utils_js_1.convertToFactor)(preVerificationGasOffsetPct)).toString()));
-                userOp.callGasLimit = (0, viem_1.toHex)(Number.parseInt((Number(userOp.callGasLimit ?? 0) *
-                    (0, Utils_js_1.convertToFactor)(callGasLimitOffsetPct)).toString()));
-                userOp.maxFeePerGas = (0, viem_1.toHex)(Number.parseInt((Number(userOp.maxFeePerGas ?? 0) *
-                    (0, Utils_js_1.convertToFactor)(maxFeePerGasOffsetPct)).toString()));
-                userOp.maxPriorityFeePerGas = (0, viem_1.toHex)(Number.parseInt((Number(userOp.maxPriorityFeePerGas ?? 0) *
-                    (0, Utils_js_1.convertToFactor)(maxPriorityFeePerGasOffsetPct)).toString()));
-                userOp = await this.getPaymasterUserOp(userOp, {
-                    ...buildUseropDto.paymasterServiceData,
-                    calculateGasLimits: false,
-                });
-                return userOp;
-            }
-            if (buildUseropDto.paymasterServiceData.calculateGasLimits === false) {
-                userOp = await this.estimateUserOpGas(userOp);
-            }
-            userOp = await this.getPaymasterUserOp(userOp, buildUseropDto.paymasterServiceData);
-            return userOp;
-        }
-        userOp = await this.estimateUserOpGas(userOp);
-        if (buildUseropDto?.gasOffset) {
-            if (buildUseropDto?.paymasterServiceData) {
-                userOp = await this.getPaymasterUserOp(userOp, {
-                    ...buildUseropDto.paymasterServiceData,
-                    calculateGasLimits: false,
-                });
-            }
-            const { verificationGasLimitOffsetPct, preVerificationGasOffsetPct, callGasLimitOffsetPct, maxFeePerGasOffsetPct, maxPriorityFeePerGasOffsetPct, } = buildUseropDto.gasOffset;
-            userOp.verificationGasLimit = (0, viem_1.toHex)(Number.parseInt((Number(userOp.verificationGasLimit ?? 0) *
-                (0, Utils_js_1.convertToFactor)(verificationGasLimitOffsetPct)).toString()));
-            userOp.preVerificationGas = (0, viem_1.toHex)(Number.parseInt((Number(userOp.preVerificationGas ?? 0) *
-                (0, Utils_js_1.convertToFactor)(preVerificationGasOffsetPct)).toString()));
-            userOp.callGasLimit = (0, viem_1.toHex)(Number.parseInt((Number(userOp.callGasLimit ?? 0) *
-                (0, Utils_js_1.convertToFactor)(callGasLimitOffsetPct)).toString()));
-            userOp.maxFeePerGas = (0, viem_1.toHex)(Number.parseInt((Number(userOp.maxFeePerGas ?? 0) *
-                (0, Utils_js_1.convertToFactor)(maxFeePerGasOffsetPct)).toString()));
-            userOp.maxPriorityFeePerGas = (0, viem_1.toHex)(Number.parseInt((Number(userOp.maxPriorityFeePerGas ?? 0) *
-                (0, Utils_js_1.convertToFactor)(maxPriorityFeePerGasOffsetPct)).toString()));
-            return userOp;
-        }
-        if (buildUseropDto?.paymasterServiceData) {
-            userOp = await this.getPaymasterUserOp(userOp, buildUseropDto.paymasterServiceData);
-        }
         return userOp;
     }
     validateUserOpAndPaymasterRequest(userOp, tokenPaymasterRequest) {
