@@ -88,7 +88,7 @@ class BaseSmartContractAccount {
             chain: params.viemChain ?? params.customChain ?? (0, index_js_1.getChain)(params.chainId),
             transport: (0, viem_1.http)(params.rpcUrl || (0, index_js_1.getChain)(params.chainId).rpcUrls.default.http[0])
         });
-        this.accountAddress = "0xsssss";
+        this.accountAddress = params.accountAddress;
         this.factoryAddress = params.factoryAddress;
         this.signer = params.signer;
         this.accountInitCode = params.initCode;

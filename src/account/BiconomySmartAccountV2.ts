@@ -192,7 +192,6 @@ export class BiconomySmartAccountV2 extends BaseSmartContractAccount {
       this.paymaster = biconomySmartAccountConfig.paymaster;
     }
 
-    this.accountAddress = "0xsssss"
 
     this.bundler = biconomySmartAccountConfig.bundler;
 
