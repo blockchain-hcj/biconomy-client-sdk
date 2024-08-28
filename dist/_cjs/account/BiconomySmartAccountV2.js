@@ -691,9 +691,11 @@ class BiconomySmartAccountV2 extends BaseSmartContractAccount_js_1.BaseSmartCont
             "initCode",
             "callData",
         ];
+        console.log("estimate 111111111111");
         this.validateUserOp(userOp, requiredFields);
         const finalUserOp = userOp;
         const { callGasLimit, verificationGasLimit, preVerificationGas, maxFeePerGas, maxPriorityFeePerGas, } = await this.bundler.estimateUserOpGas(userOp, stateOverrideSet);
+        console.log("estimate 222222222");
         if (!userOp.maxFeePerGas &&
             !userOp.maxPriorityFeePerGas &&
             (!maxFeePerGas || !maxPriorityFeePerGas)) {
