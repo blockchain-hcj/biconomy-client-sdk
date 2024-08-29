@@ -110,10 +110,10 @@ export class Bundler implements IBundler {
   ): Promise<UserOpGasResponse> {
     // expected dummySig and possibly dummmy paymasterAndData should be provided by the caller
     // bundler doesn't know account and paymaster implementation
-    console.log("bundler 111111111111")
+
     const userOp = transformUserOP(_userOp)
-    console.log('user Op', userOp);
-    console.log("bundler 222222222222")
+
+
     const bundlerUrl = this.getBundlerUrl()
 
     const response: EstimateUserOpGasResponse = await sendRequest(
@@ -131,10 +131,10 @@ export class Bundler implements IBundler {
       },
       "Bundler"
     )
-    console.log("bundler 1234567890")
+
 
     const userOpGasResponse = response.result
-    console.log("bundler 333333333333")
+
     for (const key in userOpGasResponse) {
       if (key === "maxFeePerGas" || key === "maxPriorityFeePerGas") continue
       if (

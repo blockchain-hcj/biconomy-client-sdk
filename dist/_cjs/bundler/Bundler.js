@@ -78,10 +78,7 @@ class Bundler {
         return `${this.bundlerConfig.bundlerUrl}`;
     }
     async estimateUserOpGas(_userOp, stateOverrideSet) {
-        console.log("bundler 111111111111");
         const userOp = (0, HelperFunction_js_1.transformUserOP)(_userOp);
-        console.log('user Op', userOp);
-        console.log("bundler 222222222222");
         const bundlerUrl = this.getBundlerUrl();
         const response = await (0, account_1.sendRequest)({
             url: bundlerUrl,
@@ -95,9 +92,7 @@ class Bundler {
                 jsonrpc: "2.0"
             }
         }, "Bundler");
-        console.log("bundler 1234567890");
         const userOpGasResponse = response.result;
-        console.log("bundler 333333333333");
         for (const key in userOpGasResponse) {
             if (key === "maxFeePerGas" || key === "maxPriorityFeePerGas")
                 continue;
