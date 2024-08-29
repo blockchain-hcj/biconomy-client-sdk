@@ -539,6 +539,8 @@ export declare class BiconomySmartAccountV2 extends BaseSmartContractAccount {
      * const userOp = await smartAccount.buildUserOp([{ to: "0x...", data: encodedCall }]);
      *
      */
+    buildERC20UserOpWithoutPaymaster(transactions: Transaction[], buildUseropDto?: BuildUserOpOptions): Promise<Partial<UserOperationStruct>>;
+    getERC20UserOpWithPaymaster(userOp: Partial<UserOperationStruct>, trueSender: Address, trueNonce: Hex, buildUseropDto?: BuildUserOpOptions): Promise<Partial<UserOperationStruct>>;
     buildUserOp(transactions: Transaction[], buildUseropDto?: BuildUserOpOptions): Promise<Partial<UserOperationStruct>>;
     private validateUserOpAndPaymasterRequest;
     /**

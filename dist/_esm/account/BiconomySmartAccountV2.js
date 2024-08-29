@@ -769,11 +769,7 @@ export class BiconomySmartAccountV2 extends BaseSmartContractAccount {
         }
         if (paymasterServiceData.mode === PaymasterMode.ERC20) {
             if (paymasterServiceData?.feeQuote) {
-                console.log("process feeQuote later");
                 const { feeQuote, spender, maxApproval = false } = paymasterServiceData;
-                console.log("feeQuote", feeQuote);
-                console.log("spender", spender);
-                console.log("maxApproval", maxApproval);
                 Logger.log("there is a feeQuote: ", JSON.stringify(feeQuote, null, 2));
                 if (!spender)
                     throw new Error(ERROR_MESSAGES.SPENDER_REQUIRED);
@@ -799,14 +795,11 @@ export class BiconomySmartAccountV2 extends BaseSmartContractAccount {
                 });
             }
             if (paymasterServiceData?.preferredToken) {
-                console.log("process preferred token");
-                console.log("userOp", userOp);
                 const { preferredToken } = paymasterServiceData;
                 Logger.log("there is a preferred token: ", preferredToken);
                 const feeQuotesResponse = await this.getPaymasterFeeQuotesOrData(userOp, paymasterServiceData);
                 const spender = feeQuotesResponse.tokenPaymasterAddress;
                 const feeQuote = feeQuotesResponse.feeQuotes?.[0];
-                console.log("feeQuote", feeQuote);
                 if (!spender)
                     throw new Error(ERROR_MESSAGES.SPENDER_REQUIRED);
                 if (!feeQuote)
@@ -1043,13 +1036,10 @@ export class BiconomySmartAccountV2 extends BaseSmartContractAccount {
             "initCode",
             "callData",
         ];
-        console.log("estimate 111111111111");
         this.validateUserOp(userOp, requiredFields);
         const finalUserOp = userOp;
-        console.log("estimate 00000000");
         // Making call to bundler to get gas estimations for userOp
         const { callGasLimit, verificationGasLimit, preVerificationGas, maxFeePerGas, maxPriorityFeePerGas, } = await this.bundler.estimateUserOpGas(userOp, stateOverrideSet);
-        console.log("estimate 222222222");
         // if neither user sent gas fee nor the bundler, estimate gas from provider
         if (!userOp.maxFeePerGas &&
             !userOp.maxPriorityFeePerGas &&
@@ -1335,6 +1325,50 @@ export class BiconomySmartAccountV2 extends BaseSmartContractAccount {
      * const userOp = await smartAccount.buildUserOp([{ to: "0x...", data: encodedCall }]);
      *
      */
+    async buildERC20UserOpWithoutPaymaster(transactions, buildUseropDto) {
+        const to = transactions.map((element) => element.to);
+        const data = transactions.map((element) => element.data ?? "0x");
+        const value = transactions.map((element) => element.value ?? BigInt(0));
+        const initCodeFetchPromise = this.getInitCode();
+        const dummySignatureFetchPromise = this.getDummySignatures(buildUseropDto?.params);
+        const [nonceFromFetch, initCode, signature] = await Promise.all([
+            this.getBuildUserOpNonce(buildUseropDto?.nonceOptions),
+            initCodeFetchPromise,
+            dummySignatureFetchPromise,
+        ]);
+        if (transactions.length === 0) {
+            throw new Error("Transactions array cannot be empty");
+        }
+        let callData = "0x";
+        if (!buildUseropDto?.useEmptyDeployCallData) {
+            if (transactions.length > 1 || buildUseropDto?.forceEncodeForBatch) {
+                callData = await this.encodeExecuteBatch(to, value, data);
+            }
+            else {
+                // transactions.length must be 1
+                callData = await this.encodeExecute(to[0], value[0], data[0]);
+            }
+        }
+        let userOp = {
+            sender: (await this.getAccountAddress()),
+            nonce: toHex(nonceFromFetch),
+            initCode,
+            callData,
+        };
+        // for this Smart Account current validation module dummy signature will be used to estimate gas
+        userOp.signature = signature;
+        userOp.paymasterAndData = buildUseropDto?.dummyPndOverride ?? "0x";
+        userOp = await this.estimateUserOpGas(userOp);
+        return userOp;
+    }
+    async getERC20UserOpWithPaymaster(userOp, trueSender, trueNonce, buildUseropDto) {
+        userOp.sender = trueSender;
+        userOp.nonce = trueNonce;
+        if (buildUseropDto?.paymasterServiceData) {
+            userOp = await this.getPaymasterUserOp(userOp, buildUseropDto.paymasterServiceData);
+        }
+        return userOp;
+    }
     async buildUserOp(transactions, buildUseropDto) {
         const to = transactions.map((element) => element.to);
         const data = transactions.map((element) => element.data ?? "0x");
@@ -1400,13 +1434,9 @@ export class BiconomySmartAccountV2 extends BaseSmartContractAccount {
             userOp = await this.getPaymasterUserOp(userOp, buildUseropDto.paymasterServiceData);
             return userOp;
         }
-        console.log(12121212121);
         userOp = await this.estimateUserOpGas(userOp);
-        console.log(232323232323);
         if (buildUseropDto?.gasOffset) {
-            console.log(343434343434);
             if (buildUseropDto?.paymasterServiceData) {
-                console.log(454545454545);
                 userOp = await this.getPaymasterUserOp(userOp, {
                     ...buildUseropDto.paymasterServiceData,
                     calculateGasLimits: false,
@@ -1425,10 +1455,6 @@ export class BiconomySmartAccountV2 extends BaseSmartContractAccount {
                 convertToFactor(maxPriorityFeePerGasOffsetPct)).toString()));
             return userOp;
         }
-        console.log(565656565656);
-        userOp.sender = "0xf25494d9D3742E7A71721cb20D0952f0c54cc836";
-        this.accountAddress = "0xf25494d9D3742E7A71721cb20D0952f0c54cc836";
-        userOp.nonce = "0x0A";
         if (buildUseropDto?.paymasterServiceData) {
             userOp = await this.getPaymasterUserOp(userOp, buildUseropDto.paymasterServiceData);
         }
