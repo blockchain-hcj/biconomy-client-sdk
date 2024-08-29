@@ -556,6 +556,9 @@ class BiconomySmartAccountV2 extends BaseSmartContractAccount_js_1.BaseSmartCont
             if (paymasterServiceData?.feeQuote) {
                 console.log("process feeQuote later");
                 const { feeQuote, spender, maxApproval = false } = paymasterServiceData;
+                console.log("feeQuote", feeQuote);
+                console.log("spender", spender);
+                console.log("maxApproval", maxApproval);
                 _1.Logger.log("there is a feeQuote: ", JSON.stringify(feeQuote, null, 2));
                 if (!spender)
                     throw new Error(Constants_js_1.ERROR_MESSAGES.SPENDER_REQUIRED);
