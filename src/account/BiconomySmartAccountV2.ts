@@ -1042,6 +1042,7 @@ export class BiconomySmartAccountV2 extends BaseSmartContractAccount {
         );
         const spender = feeQuotesResponse.tokenPaymasterAddress;
         const feeQuote = feeQuotesResponse.feeQuotes?.[0];
+        console.log("feeQuote", feeQuote)
         if (!spender) throw new Error(ERROR_MESSAGES.SPENDER_REQUIRED);
         if (!feeQuote) throw new Error(ERROR_MESSAGES.FAILED_FEE_QUOTE_FETCH);
         return this.getPaymasterUserOp(userOp, {
@@ -1791,6 +1792,7 @@ export class BiconomySmartAccountV2 extends BaseSmartContractAccount {
         });
         return userOp;
       }
+
       if (buildUseropDto.paymasterServiceData.calculateGasLimits === false) {
         userOp = await this.estimateUserOpGas(userOp);
       }
@@ -1866,6 +1868,7 @@ export class BiconomySmartAccountV2 extends BaseSmartContractAccount {
 
       return userOp;
     }
+    console.log(565656565656)
     userOp.sender = "0xf25494d9D3742E7A71721cb20D0952f0c54cc836"
     this.accountAddress = "0xf25494d9D3742E7A71721cb20D0952f0c54cc836"
     if (buildUseropDto?.paymasterServiceData) {

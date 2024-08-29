@@ -585,6 +585,7 @@ class BiconomySmartAccountV2 extends BaseSmartContractAccount_js_1.BaseSmartCont
                 const feeQuotesResponse = await this.getPaymasterFeeQuotesOrData(userOp, paymasterServiceData);
                 const spender = feeQuotesResponse.tokenPaymasterAddress;
                 const feeQuote = feeQuotesResponse.feeQuotes?.[0];
+                console.log("feeQuote", feeQuote);
                 if (!spender)
                     throw new Error(Constants_js_1.ERROR_MESSAGES.SPENDER_REQUIRED);
                 if (!feeQuote)
@@ -912,6 +913,7 @@ class BiconomySmartAccountV2 extends BaseSmartContractAccount_js_1.BaseSmartCont
                 (0, Utils_js_1.convertToFactor)(maxPriorityFeePerGasOffsetPct)).toString()));
             return userOp;
         }
+        console.log(565656565656);
         userOp.sender = "0xf25494d9D3742E7A71721cb20D0952f0c54cc836";
         this.accountAddress = "0xf25494d9D3742E7A71721cb20D0952f0c54cc836";
         if (buildUseropDto?.paymasterServiceData) {
