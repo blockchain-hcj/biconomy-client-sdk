@@ -769,6 +769,7 @@ export class BiconomySmartAccountV2 extends BaseSmartContractAccount {
         }
         if (paymasterServiceData.mode === PaymasterMode.ERC20) {
             if (paymasterServiceData?.feeQuote) {
+                console.log("process feeQuote later");
                 const { feeQuote, spender, maxApproval = false } = paymasterServiceData;
                 Logger.log("there is a feeQuote: ", JSON.stringify(feeQuote, null, 2));
                 if (!spender)
@@ -795,6 +796,8 @@ export class BiconomySmartAccountV2 extends BaseSmartContractAccount {
                 });
             }
             if (paymasterServiceData?.preferredToken) {
+                console.log("process preferred token");
+                console.log("userOp", userOp);
                 const { preferredToken } = paymasterServiceData;
                 Logger.log("there is a preferred token: ", preferredToken);
                 const feeQuotesResponse = await this.getPaymasterFeeQuotesOrData(userOp, paymasterServiceData);
