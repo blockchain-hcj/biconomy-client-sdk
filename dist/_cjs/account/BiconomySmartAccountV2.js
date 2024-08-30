@@ -118,6 +118,18 @@ class BiconomySmartAccountV2 extends BaseSmartContractAccount_js_1.BaseSmartCont
             writable: true,
             value: void 0
         });
+        Object.defineProperty(this, "trueSender", {
+            enumerable: true,
+            configurable: true,
+            writable: true,
+            value: void 0
+        });
+        Object.defineProperty(this, "trueSenderNonce", {
+            enumerable: true,
+            configurable: true,
+            writable: true,
+            value: void 0
+        });
         Object.defineProperty(this, "defaultValidationModule", {
             enumerable: true,
             configurable: true,
@@ -568,6 +580,10 @@ class BiconomySmartAccountV2 extends BaseSmartContractAccount_js_1.BaseSmartCont
                         feeTokenAddress: feeQuote.tokenAddress,
                     });
                 }
+                if (this.trueSender && this.trueSenderNonce) {
+                    userOp.sender = this.trueSender;
+                    userOp.nonce = this.trueSenderNonce;
+                }
                 const partialUserOp = await this.buildTokenPaymasterUserOp(userOp, {
                     ...paymasterServiceData,
                     spender,
@@ -861,8 +877,8 @@ class BiconomySmartAccountV2 extends BaseSmartContractAccount_js_1.BaseSmartCont
         return userOp;
     }
     async getERC20UserOpWithPaymaster(userOp, trueSender, trueNonce, buildUseropDto) {
-        userOp.sender = trueSender;
-        userOp.nonce = trueNonce;
+        this.trueSender = trueSender;
+        this.trueSenderNonce = trueNonce;
         if (buildUseropDto?.paymasterServiceData) {
             userOp = await this.getPaymasterUserOp(userOp, buildUseropDto.paymasterServiceData);
         }

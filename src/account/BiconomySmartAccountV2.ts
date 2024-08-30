@@ -137,6 +137,10 @@ export class BiconomySmartAccountV2 extends BaseSmartContractAccount {
 
   private maxIndexForScan!: number;
 
+
+  private trueSender?: Address;
+
+  private trueSenderNonce?: Hex;
   // Validation module responsible for account deployment initCode. This acts as a default authorization module.
   defaultValidationModule!: BaseValidationModule;
 
@@ -1002,6 +1006,7 @@ export class BiconomySmartAccountV2 extends BaseSmartContractAccount {
   public async getPaymasterUserOp(
     userOp: Partial<UserOperationStruct>,
     paymasterServiceData: PaymasterUserOperationDto,
+
   ): Promise<Partial<UserOperationStruct>> {
     if (paymasterServiceData.mode === PaymasterMode.SPONSORED) {
       return this.getPaymasterAndData(userOp, paymasterServiceData);
@@ -1021,6 +1026,11 @@ export class BiconomySmartAccountV2 extends BaseSmartContractAccount {
             ...paymasterServiceData,
             feeTokenAddress: feeQuote.tokenAddress,
           });
+        }
+
+        if (this.trueSender && this.trueSenderNonce) {
+          userOp.sender = this.trueSender;
+          userOp.nonce = this.trueSenderNonce;
         }
         const partialUserOp = await this.buildTokenPaymasterUserOp(userOp, {
           ...paymasterServiceData,
@@ -1744,8 +1754,8 @@ async getERC20UserOpWithPaymaster(
   trueSender: Address, 
   trueNonce: Hex,
   buildUseropDto?: BuildUserOpOptions): Promise<Partial<UserOperationStruct>> {
-  userOp.sender = trueSender;
-  userOp.nonce = trueNonce;
+    this.trueSender = trueSender;
+    this.trueSenderNonce = trueNonce;
   if (buildUseropDto?.paymasterServiceData) {
     userOp = await this.getPaymasterUserOp(
       userOp,

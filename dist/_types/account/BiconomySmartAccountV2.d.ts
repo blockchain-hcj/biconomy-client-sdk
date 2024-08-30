@@ -24,6 +24,8 @@ export declare class BiconomySmartAccountV2 extends BaseSmartContractAccount {
     private implementationAddress;
     private scanForUpgradedAccountsFromV1;
     private maxIndexForScan;
+    private trueSender?;
+    private trueSenderNonce?;
     defaultValidationModule: BaseValidationModule;
     activeValidationModule: BaseValidationModule;
     private constructor();
