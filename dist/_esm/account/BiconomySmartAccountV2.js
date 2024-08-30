@@ -115,18 +115,6 @@ export class BiconomySmartAccountV2 extends BaseSmartContractAccount {
             writable: true,
             value: void 0
         });
-        Object.defineProperty(this, "trueSender", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "trueSenderNonce", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
         // Validation module responsible for account deployment initCode. This acts as a default authorization module.
         Object.defineProperty(this, "defaultValidationModule", {
             enumerable: true,
@@ -781,7 +769,6 @@ export class BiconomySmartAccountV2 extends BaseSmartContractAccount {
         }
         if (paymasterServiceData.mode === PaymasterMode.ERC20) {
             if (paymasterServiceData?.feeQuote) {
-                console.log("processing feeQuote");
                 const { feeQuote, spender, maxApproval = false } = paymasterServiceData;
                 Logger.log("there is a feeQuote: ", JSON.stringify(feeQuote, null, 2));
                 if (!spender)
@@ -795,17 +782,12 @@ export class BiconomySmartAccountV2 extends BaseSmartContractAccount {
                         feeTokenAddress: feeQuote.tokenAddress,
                     });
                 }
-                if (this.trueSender && this.trueSenderNonce) {
-                    userOp.sender = this.trueSender;
-                    userOp.nonce = this.trueSenderNonce;
-                }
                 const partialUserOp = await this.buildTokenPaymasterUserOp(userOp, {
                     ...paymasterServiceData,
                     spender,
                     maxApproval,
                     feeQuote,
                 });
-                console.log("build token paymaster user op");
                 return this.getPaymasterAndData(partialUserOp, {
                     ...paymasterServiceData,
                     feeTokenAddress: feeQuote.tokenAddress,
@@ -815,9 +797,8 @@ export class BiconomySmartAccountV2 extends BaseSmartContractAccount {
             if (paymasterServiceData?.preferredToken) {
                 const { preferredToken } = paymasterServiceData;
                 Logger.log("there is a preferred token: ", preferredToken);
-                console.log("get paymaster fee quotes or data");
+                ;
                 const feeQuotesResponse = await this.getPaymasterFeeQuotesOrData(userOp, paymasterServiceData);
-                console.log("get paymaster fee quotes or data response success");
                 const spender = feeQuotesResponse.tokenPaymasterAddress;
                 const feeQuote = feeQuotesResponse.feeQuotes?.[0];
                 if (!spender)
@@ -1382,8 +1363,8 @@ export class BiconomySmartAccountV2 extends BaseSmartContractAccount {
         return userOp;
     }
     async getERC20UserOpWithPaymaster(userOp, trueSender, trueNonce, buildUseropDto) {
-        this.trueSender = trueSender;
-        this.trueSenderNonce = trueNonce;
+        userOp.sender = trueSender;
+        userOp.nonce = trueNonce;
         if (buildUseropDto?.paymasterServiceData) {
             userOp = await this.getPaymasterUserOp(userOp, buildUseropDto.paymasterServiceData);
         }
