@@ -1008,7 +1008,7 @@ export class BiconomySmartAccountV2 extends BaseSmartContractAccount {
     }
     if (paymasterServiceData.mode === PaymasterMode.ERC20) {
       if (paymasterServiceData?.feeQuote) {
-
+        console.log("processing feeQuote")
         const { feeQuote, spender, maxApproval = false } = paymasterServiceData;
         Logger.log("there is a feeQuote: ", JSON.stringify(feeQuote, null, 2));
         if (!spender) throw new Error(ERROR_MESSAGES.SPENDER_REQUIRED);
@@ -1028,6 +1028,7 @@ export class BiconomySmartAccountV2 extends BaseSmartContractAccount {
           maxApproval,
           feeQuote,
         });
+        console.log("build token paymaster user op");
         return this.getPaymasterAndData(partialUserOp, {
           ...paymasterServiceData,
           feeTokenAddress: feeQuote.tokenAddress,
@@ -1039,10 +1040,12 @@ export class BiconomySmartAccountV2 extends BaseSmartContractAccount {
 
         const { preferredToken } = paymasterServiceData;
         Logger.log("there is a preferred token: ", preferredToken);
+        console.log("get paymaster fee quotes or data");
         const feeQuotesResponse = await this.getPaymasterFeeQuotesOrData(
           userOp,
           paymasterServiceData,
         );
+        console.log("get paymaster fee quotes or data response success");
         const spender = feeQuotesResponse.tokenPaymasterAddress;
         const feeQuote = feeQuotesResponse.feeQuotes?.[0];
 
