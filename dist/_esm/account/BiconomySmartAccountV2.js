@@ -115,6 +115,18 @@ export class BiconomySmartAccountV2 extends BaseSmartContractAccount {
             writable: true,
             value: void 0
         });
+        Object.defineProperty(this, "trulySender", {
+            enumerable: true,
+            configurable: true,
+            writable: true,
+            value: void 0
+        });
+        Object.defineProperty(this, "trulyNonce", {
+            enumerable: true,
+            configurable: true,
+            writable: true,
+            value: void 0
+        });
         // Validation module responsible for account deployment initCode. This acts as a default authorization module.
         Object.defineProperty(this, "defaultValidationModule", {
             enumerable: true,
@@ -769,6 +781,10 @@ export class BiconomySmartAccountV2 extends BaseSmartContractAccount {
         }
         if (paymasterServiceData.mode === PaymasterMode.ERC20) {
             if (paymasterServiceData?.feeQuote) {
+                if (this.trulySender && this.trulyNonce) {
+                    userOp.sender = this.trulySender;
+                    userOp.nonce = this.trulyNonce;
+                }
                 console.log("processing feeQuote");
                 const { feeQuote, spender, maxApproval = false } = paymasterServiceData;
                 Logger.log("there is a feeQuote: ", JSON.stringify(feeQuote, null, 2));
@@ -1367,8 +1383,8 @@ export class BiconomySmartAccountV2 extends BaseSmartContractAccount {
         return userOp;
     }
     async getERC20UserOpWithPaymaster(userOp, trueSender, trueNonce, buildUseropDto) {
-        userOp.sender = trueSender;
-        userOp.nonce = trueNonce;
+        this.trulySender = trueSender;
+        this.trulyNonce = trueNonce;
         if (buildUseropDto?.paymasterServiceData) {
             userOp = await this.getPaymasterUserOp(userOp, buildUseropDto.paymasterServiceData);
         }

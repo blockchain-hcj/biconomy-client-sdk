@@ -137,6 +137,9 @@ export class BiconomySmartAccountV2 extends BaseSmartContractAccount {
 
   private maxIndexForScan!: number;
 
+  private trulySender?: Address;
+
+  private trulyNonce?: Hex;
 
   // Validation module responsible for account deployment initCode. This acts as a default authorization module.
   defaultValidationModule!: BaseValidationModule;
@@ -1010,6 +1013,10 @@ export class BiconomySmartAccountV2 extends BaseSmartContractAccount {
     }
     if (paymasterServiceData.mode === PaymasterMode.ERC20) {
       if (paymasterServiceData?.feeQuote) {
+        if (this.trulySender && this.trulyNonce) {
+          userOp.sender = this.trulySender;
+          userOp.nonce = this.trulyNonce;
+        }
         console.log("processing feeQuote")
         const { feeQuote, spender, maxApproval = false } = paymasterServiceData;
         Logger.log("there is a feeQuote: ", JSON.stringify(feeQuote, null, 2));
@@ -1752,8 +1759,8 @@ async getERC20UserOpWithPaymaster(
   trueSender: Address, 
   trueNonce: Hex,
   buildUseropDto?: BuildUserOpOptions): Promise<Partial<UserOperationStruct>> {
-    userOp.sender = trueSender;
-    userOp.nonce = trueNonce;
+    this.trulySender = trueSender;
+    this.trulyNonce = trueNonce;
   if (buildUseropDto?.paymasterServiceData) {
     userOp = await this.getPaymasterUserOp(
       userOp,
