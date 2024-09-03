@@ -1017,6 +1017,9 @@ export class BiconomySmartAccountV2 extends BaseSmartContractAccount {
           userOp.sender = this.trulySender;
           userOp.nonce = this.trulyNonce;
         }
+        userOp.verificationGasLimit = 1000000;
+
+        
         console.log("processing feeQuote")
         const { feeQuote, spender, maxApproval = false } = paymasterServiceData;
         Logger.log("there is a feeQuote: ", JSON.stringify(feeQuote, null, 2));
