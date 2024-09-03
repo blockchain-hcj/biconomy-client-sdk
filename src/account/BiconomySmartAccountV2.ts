@@ -1019,8 +1019,8 @@ export class BiconomySmartAccountV2 extends BaseSmartContractAccount {
         }
         userOp.verificationGasLimit = 1000000;
 
-        
-        console.log("processing feeQuote")
+
+
         const { feeQuote, spender, maxApproval = false } = paymasterServiceData;
         Logger.log("there is a feeQuote: ", JSON.stringify(feeQuote, null, 2));
         if (!spender) throw new Error(ERROR_MESSAGES.SPENDER_REQUIRED);
@@ -1035,7 +1035,7 @@ export class BiconomySmartAccountV2 extends BaseSmartContractAccount {
           });
         }
 
-        console.log("processing feeQuote successfully")
+
 
         const partialUserOp = await this.buildTokenPaymasterUserOp(userOp, {
           ...paymasterServiceData,
@@ -1044,7 +1044,7 @@ export class BiconomySmartAccountV2 extends BaseSmartContractAccount {
           feeQuote,
         });
 
-        console.log("processing buildTokenPaymasterUserOp successfully")
+
 
         return this.getPaymasterAndData(partialUserOp, {
           ...paymasterServiceData,
@@ -1056,14 +1056,14 @@ export class BiconomySmartAccountV2 extends BaseSmartContractAccount {
 
         const { preferredToken } = paymasterServiceData;
         Logger.log("there is a preferred token: ", preferredToken);
-        console.log("processing preferredToken")
+
 
         const feeQuotesResponse = await this.getPaymasterFeeQuotesOrData(
           userOp,
           paymasterServiceData,
         );
 
-        console.log("processing feeQuotesResponse successfully")
+
         const spender = feeQuotesResponse.tokenPaymasterAddress;
         const feeQuote = feeQuotesResponse.feeQuotes?.[0];
 
